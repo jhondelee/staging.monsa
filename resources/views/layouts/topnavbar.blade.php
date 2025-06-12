@@ -6,7 +6,7 @@
         </div>
         <ul class="nav navbar-top-links navbar-right">
              <li>
-                <span class="m-r-sm text-muted">STAGING SERVER</span>
+                <span class="m-r-sm text-muted"><h5>STAGING SERVER</h5></span>
             </li>
             <li>
                 <span class="m-r-sm text-muted welcome-message">Welcome to MONSA Trading</span>
