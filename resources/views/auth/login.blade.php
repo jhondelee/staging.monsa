@@ -11,7 +11,7 @@
             <div>
 
                 <h1 class="logo-name">
-                    <h5>STAGING</h5>
+                    <h5>STAGING.........</h5>
                     <center>
 
                         <img alt="image" width="150" height="150" class="img-responsive " src="/img/temporary-logo.jpg"/>
