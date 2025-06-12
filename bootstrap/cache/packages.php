@@ -8,13 +8,13 @@
   ),
   'codedge/laravel-fpdf' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Codedge\\Fpdf\\FpdfServiceProvider',
-    ),
     'aliases' => 
     array (
       'Fpdf' => 'Codedge\\Fpdf\\Facades\\Fpdf',
+    ),
+    'providers' => 
+    array (
+      0 => 'Codedge\\Fpdf\\FpdfServiceProvider',
     ),
   ),
   'fideloper/proxy' => 
@@ -59,13 +59,13 @@
   ),
   'yajra/laravel-datatables-oracle' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Yajra\\DataTables\\DataTablesServiceProvider',
-    ),
     'aliases' => 
     array (
       'DataTables' => 'Yajra\\DataTables\\Facades\\DataTables',
+    ),
+    'providers' => 
+    array (
+      0 => 'Yajra\\DataTables\\DataTablesServiceProvider',
     ),
   ),
 );
