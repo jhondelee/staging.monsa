@@ -13,7 +13,7 @@
                 <h1 class="logo-name">
 
                     <center>
-
+                        <h1>STAGING</h1>
                         <img alt="image" width="150" height="150" class="img-responsive " src="/img/temporary-logo.jpg"/>
 
                     </center>
