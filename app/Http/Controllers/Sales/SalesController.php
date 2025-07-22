@@ -69,9 +69,9 @@ class SalesController extends Controller
 
         $salesorder_status = "NEW";
 
-  
+         $subAmount = 0;
 
-          return view('pages.salesorder.create',compact('employee','employee_agent','creator','customer_id','items','salesorder_status','location'));
+          return view('pages.salesorder.create',compact('employee','employee_agent','creator','customer_id','items','salesorder_status','location','subAmount'));
     }
 
 
@@ -258,9 +258,11 @@ class SalesController extends Controller
 
         $salesorder_status = $salesorder->status;
 
+        $subAmount = SalesOrderItem::where('so_number',$salesorder->so_number)->sum('sub_amount');
+
         $deductStatus = $salesorder->inventory_deducted;
 
-        return view('pages.salesorder.edit',compact('salesorder','employee_agent','creator','employee','customer_id','items','salesorder_status','location','deductStatus'));
+        return view('pages.salesorder.edit',compact('salesorder','employee_agent','creator','employee','customer_id','items','salesorder_status','location','deductStatus','subAmount'));
 
     }
 
@@ -427,9 +429,11 @@ class SalesController extends Controller
 
                         $inventory = Inventory::findOrfail($salesorderitems->inventory_id);
 
-                        $inventory->unit_quantity = $inventory->unit_quantity - $salesorderitems->order_quantity;
+                        $resultQTY = $inventory->unit_quantity - $salesorderitems->order_quantity;
 
-                        $inventory->onhand_quantity = ($inventory->unit_quantity * $items->unit_quantity);
+                        $inventory->unit_quantity = $resultQTY;
+
+                        $inventory->onhand_quantity = $resultQTY;
 
                         $inventory->save();
                 }

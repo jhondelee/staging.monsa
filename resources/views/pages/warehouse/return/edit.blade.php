@@ -93,22 +93,33 @@
             var _id = $('#returns_id').val();
 
               $.ajax({  
-                    url:  '{{ url('returns/return-items') }}',
+                    url:  '{{ url("returns/return-items") }}',
                     type: 'POST',
                     dataType: 'json',
                     data: { _token: "{{ csrf_token() }}",
                     id:_id}, 
                     success:function(results){
-                    
-                                  //showlist
-
+                        
                         for(var i=0 ;i<=results.length;i++) {
 
-                            $('#dTable-receive-item-table tbody').append("<tr><td><input type='text' name='return_id[]' class='form-control input-sm text-center return_id' size='3'  value="+ results[i].id +" readonly/></td><td>"+ results[i].item_name +"</td><td>"+ results[i].unit +"</td><td><input type='text' name='item_quantity[]' class='form-control input-sm text-center item_quantity' size='3'  value="+ results[i].item_quantity +" readonly id ='item_quantity'/></td><td><input type='text' name='return_qty[]' class='form-control input-sm text-center return_qty' size='4' value="+ results[i].return_quantity +" id ='return_qty'></td></tr>");
+                            $('#dTable-return-item-table tbody').append("<tr><td><input type='text' name='return_id[]' class='form-control input-sm text-center return_id' size='2'  value="+ results[i].id +" readonly/><input type='hidden' name='item_id[]' class='item_id' value="+ results[i].item_id +" id ='item_id'/></td><td>"+ results[i].description +"</td><td>"+ results[i].unit +"</td><td><input type='text' name='item_quantity[]' class='form-control input-sm text-center item_quantity' size='3'  value="+ results[i].item_quantity +" readonly id ='item_quantity'/></td><td><input type='text' name='set_srp[]' class='form-control input-sm text-center set_srp' size='4' value="+ results[i].set_srp +"  readonly id ='set_srp'></td><td><input type='text' name='return_qty[]' class='form-control input-sm text-center return_qty' size='2' value="+ results[i].return_quantity +" id ='return_qty'></td><td><input type='text' name='gAmount[]' class='form-control input-sm text-right gAmount' style='font-weight:bold;' size='3' value="+ results[i].amount +" readonly id ='gAmount'></td></tr>");
 
+
+    
                             }
-         
+                               
+
+                                $( "#dTable-return-item-table tbody > tr" ).each( function() {
+                                    var $row = $( this );
+                                    var _subtotal = $row.find( ".gAmount" ).val();
+                                    _total_amount += parseFloat( ('0' + _subtotal).replace(/[^0-9-\.]/g, ''), 10 );
+                                 });
+
+                                _total_amount = _total_amount.toFixed(2);
+                                $('#total_amount').val( _total_amount );
+
                     }
+
             });
     });  
  
@@ -126,71 +137,38 @@
             });
         });
 
-       
-                // compare input quanity
-        $('#dTable-receive-item-table').on('keyup','.return_qty',function(e){
-        //compute price
+
+    $('#dTable-return-item-table').on('keyup','.return_qty',function(e){
         var _returnQty = parseFloat($(this).closest( 'tr ').find( '#return_qty' ).val());
         var _itemQty = parseFloat($(this).closest( 'tr' ).find( '#item_quantity' ).val());
+        var _setSRP = parseFloat($(this).closest( 'tr' ).find( '#set_srp' ).val());
+        var _total_amount = 0;
 
              if ( _returnQty > _itemQty ){
 
                     toastr.warning('the return quantity is too much','Warning');
                     $(this).closest('tr').find( '#return_qty' ).val( '0' )
                     return false;
-             } 
+             } else {
+
+                    var _Qty = $(this).val();
+                    var _gAmount = (_setSRP * _Qty);
+                     _gAmount = _gAmount.toFixed(2);
+                    $(this).closest('tr').find( '#gAmount' ).val( _gAmount );
+             }
+
+             $( "#dTable-return-item-table tbody > tr" ).each( function() {
+                var $row = $( this );
+                var _subtotal = $row.find( ".gAmount" ).val();
+                _total_amount += parseFloat( ('0' + _subtotal).replace(/[^0-9-\.]/g, ''), 10 );
+             });
+             _total_amount = _total_amount.toFixed(2);
+            $('#total_amount').val( _total_amount );
         
         }); 
 
+
     
-
-        // allow only numeric with decimal
-        $("._received_qty").on("keypress keyup blur",function (event) {
-            //this.value = this.value.replace(/[^0-9\.]/g,'');
-         $(this).val($(this).val().replace(/[^0-9\.]/g,''));
-                if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
-                    event.preventDefault();
-                }
-        });
-
-        
-         $(document).on("keyup", "._discount_input", function () {
-
-                        if (var_discount == 0 || var_discount == null){
-
-                            var i_total_amount = 0;
-
-                            $( "#dTable-receive-item-table tbody > tr" ).each( function() {
-                                    var $row = $( this );        
-                                    var _subtotal = $row.find( "._total_amount" ).val();
-                
-                                    i_total_amount += parseFloat( ('0' + _subtotal).replace(/[^0-9-\.]/g, ''), 10 );
-                                   
-                            });
-
-                             i_total_amount = i_total_amount.toFixed(2);
-                            $('input[name="grand_total_amount"]').val(  i_total_amount  );
-
-                        }   
-      
-                var var_discount = $( "._discount_input" ).val();
-                var var_gtotal = $( "._grand_total_amount" ).val();
-
-                //var_discount =parseFloat( ('0' + var_discount).replace(/[^0-9-\.]/g, ''), 10 );
-                //var_gtotal =parseFloat( ('0' + var_gtotal).replace(/[^0-9-\.]/g, ''), 10 );
-
-                var var_Gtotal_amount = 0.00;
-           
-                    var_Gtotal_amount = var_gtotal - var_discount;
-
-                    var_Gtotal_amount = var_Gtotal_amount.toFixed(2);
-                    
-                    $('input[name="grand_total_amount"]').val(  var_Gtotal_amount  );
-
-
-              
-            });
-
 
         function confirmPost(data,model) {   
          $('#confirmPost').modal({ backdrop: 'static', keyboard: false })
@@ -201,7 +179,7 @@
         }
 
         
-  
+    /* $('#dTable-return-item-table tbody').append("<tr><td><input type='text' name='return_id[]' class='form-control input-sm text-center return_id' size='2'  value="+ results[i].id +" readonly/><input type='hidden' name='item_id[]' class='item_id' value="+ results[i].item_id +" id ='item_id'/></td><td>"+ results[i].item_name +"</td><td>"+ results[i].unit +"</td><td><input type='text' name='item_quantity[]' class='form-control input-sm text-center item_quantity' size='3'  value="+ results[i].item_quantity +" readonly id ='item_quantity'/></td><td><input type='text' name='set_srp[]' class='form-control input-sm text-center set_srp' size='4' value="+ results[i].set_srp +"  readonly id ='set_srp'></td><td><input type='text' name='return_qty[]' class='form-control input-sm text-center return_qty' size='2' value="+ results[i].return_quantity +" id ='return_qty'></td><td><input type='text' name='subAmount[]' class='form-control input-sm text-center subAmount' size='3' value="+ results[i].amount +" readonly id ='subAmount'></td></tr>");*/
 
 </script>
 

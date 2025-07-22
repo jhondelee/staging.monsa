@@ -15,6 +15,8 @@ use App\Item;
 use App\Inventory;
 use App\User as Users;
 use App\SalesOrder;
+use App\SalesOrderItem;
+use App\SalesPayment;
 use App\Returns;
 use App\ReturnItems;
 use App\WarehouseLocation;
@@ -51,8 +53,8 @@ class ReturnsController extends Controller
 
     public function create()
     {
-        $so_number = SalesOrder::where('status','POSTED')->pluck('so_number','so_number');
-
+        $so_number = SalesOrder::whereIn('status',array('POSTED','CLOSED'))->pluck('so_number','so_number');
+        
         $location  = WarehouseLocation::pluck('name','id');
 
         $received_by = $this->user->getemplist()->pluck('emp_name','id');
@@ -104,6 +106,8 @@ class ReturnsController extends Controller
        $returns->return_date    =    $request->return_date;
 
        $returns->reason         =    $request->reason;
+
+       $returns->amount         =    $request->total_amount;
 
        $returns->location       =    $request->location;
 
@@ -181,40 +185,43 @@ class ReturnsController extends Controller
 
        $returns = Returns::findorfail( $id);
 
+
        $returns->return_date    =    $request->return_date;
 
        $returns->reason         =    $request->reason;
+
+       $returns->amount         =    $request->total_amount;
 
        $returns->location       =    $request->location;
 
        $returns->received_by    =    $request->received_by;
 
        $returns->save();
-
-             $retitems = $this->returns->getsoitems($request->so_number);
-
+   
+             $retitems = $this->returns->getreturnitems($id);
+              
              foreach ($retitems as $key => $retitem) {
-                
+                    
                  $returnItems = ReturnItems::findorfail($retitem->id);
 
-                 $returnItems->delete();
+                  $returnItems->delete();
              }
 
 
-            $rid = $returns->id;
-            $returnId = $request->get('return_id');
+            $rid = $id;
+            $returnId = $request->get('item_id');
             $returnQty = $request->get('return_qty');
 
             for ( $i=0 ; $i < count($returnQty) ; $i++ ){
                 
-                $soitem = $this->returns->getsoitems($request->so_number)->where('id', $returnId[$i])->first();
-          
+                $soitem = $this->returns->getsoitems($returns->so_number)->where('item_id',$returnId[$i])->first();
+
                 $returnItems = New ReturnItems;
 
-                $returnItems->returns_id        =  $rid;
+                $returnItems->returns_id        = $rid;
 
                 $returnItems->item_id           = $soitem->item_id;
-
+ 
                 $returnItems->item_quantity     = $soitem->order_quantity;
 
                 $returnItems->return_quantity   = $returnQty[$i];
@@ -237,34 +244,76 @@ class ReturnsController extends Controller
         
        $returns = Returns::findorfail($id);
 
-       $returnItems = ReturnItems::where('returns_id',$returns->id)->get();
+       $returnItems = ReturnItems::where('returns_id',$returns->id)->where('return_quantity','>',0)->get();
 
+       // Adding New Item at Inventory as Return
        foreach ($returnItems as $key => $returnitem) {
 
             $so = SalesOrder::where('so_number',$returns->so_number)->first();
 
             $items = Item::findorfail($returnitem->item_id);
 
-            $item_unit_qty = $items->unit_quantity * $returnitem->return_quantity;
-
             $inventory = New Inventory;
             $inventory->item_id           = $returnitem->item_id;
             $inventory->unit_quantity     = $returnitem->return_quantity;
-            $inventory->onhand_quantity   = $item_unit_qty;
+            $inventory->onhand_quantity   = $returnitem->return_quantity;
             $inventory->unit_cost         = $returnitem->unit_cost;
             $inventory->location          = $so->location;
             $inventory->received_date     = $returns->return_date;
             $inventory->expiration_date   = NULL;
-            $inventory->status            = 'Out of Stock';
+            $inventory->status            = 'Return';
             $inventory->consumable        = 2;
             $inventory->created_by        = auth()->user()->id;
             $inventory->save();
 
-       }
+       }    
 
         $returns->status         =    1;
 
-       $returns->save();
+        $returns->save();
+
+            // Less Amount Return item on Sales Order
+           $sorder = SalesOrder::where('so_number',$returns->so_number)->first();
+
+               $salesORder = SalesOrder::findorfail($sorder->id);
+
+                   $lessReturn =  $salesORder->total_sales - $returns->amount;
+
+                   $salesORder->total_sales     =  $lessReturn;
+
+                   $salesORder->save();
+
+            // Less amount of SRP and Quantity
+
+            $getitemlists = ReturnItems::where('returns_id',$returns->id)->where('return_quantity','>',0)->get();
+
+             foreach ($getitemlists as $key => $getitemlist){
+
+                $soitems = SalesOrderItem::where('sales_order_id',$sorder->id)->where('item_id',$getitemlist->item_id)->first();
+
+                    $updatesoitem = SalesOrderItem::findorfail($soitems->id);
+
+                    $updatesoitem->order_quantity = $updatesoitem->order_quantity - $getitemlist->return_quantity;
+
+                    $updatesoitem->sub_amount     = $updatesoitem->order_quantity * $updatesoitem->set_srp;
+
+                    $updatesoitem->save();
+
+           // Less amount on Sales Payment
+
+            $getSalesPayment = SalesPayment::where('sales_order_id',$sorder->id)->first();
+
+            $SalesPayment =SalesPayment::findorfail($getSalesPayment->id);
+
+                    $sorderid = SalesOrder::findorfail($sorder->id);
+
+            $SalesPayment->sales_total =  $sorderid->total_sales;
+
+            $SalesPayment->save();
+
+
+         }
+
 
 
         return redirect()->route('returns.index')

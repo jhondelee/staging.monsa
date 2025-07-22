@@ -148,7 +148,7 @@ class HomeController extends Controller
             }
         }
 
-           
+      
         $getcustomerlist = $this->dashboard->getinactivecs();
 
         $gettopsales = $this->dashboard->gettopsalesteam();

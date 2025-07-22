@@ -278,117 +278,94 @@ class CustomerController extends Controller
           
         $customers->save();
 
+                            /*
+                                $getItemId = $request->get('item_id');
 
-            $getItemId = $request->get('item_id');
+                                $getItemSrp = $request->get('item_srp');
 
-            $getItemSrp = $request->get('item_srp');
+                                //$getItemCost = $request->get('item_cost');
 
-            //$getItemCost = $request->get('item_cost');
+                                $getAmountDisc = $request->get('amountD');
 
-            $getAmountDisc = $request->get('amountD');
+                                $getPercentDisc = $request->get('perD');
 
-            $getPercentDisc = $request->get('perD');
+                                $getSetSRP = $request->get('setSRP');
+                                
+                                $activated = $request->get('disc_active');
 
-            $getSetSRP = $request->get('setSRP');
-            
-            $activated = $request->get('disc_active');
+                                    $customerSRPs = CustomerPrice::where('customer_id',$id)->get();
 
-                $customerSRPs = CustomerPrice::where('customer_id',$id)->get();
+                                    if(isset($customerSRPs))
+                                    {
+                                        foreach ($customerSRPs as $key => $customerSRP) 
+                                        {
+                                            $csPrice = CustomerPrice::findOrfail($customerSRP->id);
 
-                if(isset($customerSRPs))
-                {
-                    foreach ($customerSRPs as $key => $customerSRP) 
-                    {
-                        $csPrice = CustomerPrice::findOrfail($customerSRP->id);
+                                            $csPrice->delete();
+                                        }
 
-                        $csPrice->delete();
-                    }
-
-                }
-
-
-        if (isset($getItemId)){
-
-           for ($i=0; $i < count($getItemId); $i++) { 
-
-                if (isset($activated[$i])){
-                    $activeDisc = 1;
-                }else{
-                    $activeDisc = 0;
-                }
-                
-                $customerPrices = New CustomerPrice;
-
-                $customerPrices->customer_id            = $customers->id;
-
-                $customerPrices->item_id                = $getItemId[$i];
-
-                if (isset($getItemCost[$i])){
-                    $customerPrices->unit_cost              = $getItemCost[$i];
-                }else{
-                    $customerPrices->unit_cost              = 0;
-                }
-                
-                if (isset($getItemSrp[$i])){
-                    $customerPrices->srp                    = $getItemSrp[$i];
-                }else{
-                    $customerPrices->srp                    =0;
-                }
-             
-                if (isset($getAmountDisc[$i])){
-                    $customerPrices->srp_discounted         = $getAmountDisc[$i]; 
-                }else{
-                    $customerPrices->srp_discounted         = 0;
-                }
-             
-                
-                if (isset($getPercentDisc[$i])){
-                    $customerPrices->percentage_discount    = $getPercentDisc[$i];               
-                }else{
-                    $customerPrices->percentage_discount    = 0;
-                }
-                
-
-                $customerPrices->activated_discount     = $activeDisc;
-
-                if (isset($getPercentDisc[$i])){
-                    $customerPrices->set_srp                = $getPercentDisc[$i];              
-                }else{
-                    $customerPrices->set_srp    = 0;
-                }
+                                    }
 
 
-                $customerPrices->save();
+                            if (isset($getItemId)){
 
-            }
-        }
-       
+                               for ($i=0; $i < count($getItemId); $i++) { 
 
-            
-    
+                                    if (isset($activated[$i])){
+                                        $activeDisc = 1;
+                                    }else{
+                                        $activeDisc = 0;
+                                    }
+                                    
+                                    $customerPrices = New CustomerPrice;
 
-        /*    if (isset($activated))
-            {
-                foreach ($activated as $key => $value) {
-                         
-                    //$activeID= CustomerPrice::where('customer_id',$id)->where('item_id',$value)->first();
+                                    $customerPrices->customer_id            = $customers->id;
 
-                        $activeID  = $this->customer->getItemFromCustomer($id,$value);
-                  
-                        $activeprice = CustomerPrice::find($activeID->id);
+                                    $customerPrices->item_id                = $getItemId[$i];
 
-                        $activeprice->activated_discount = 1;
-               
-                        $activeprice->save(); 
-                
-                    
-                }
-            }*/
+                                    if (isset($getItemCost[$i])){
+                                        $customerPrices->unit_cost              = $getItemCost[$i];
+                                    }else{
+                                        $customerPrices->unit_cost              = 0;
+                                    }
+                                    
+                                    if (isset($getItemSrp[$i])){
+                                        $customerPrices->srp                    = $getItemSrp[$i];
+                                    }else{
+                                        $customerPrices->srp                    =0;
+                                    }
+                                 
+                                    if (isset($getAmountDisc[$i])){
+                                        $customerPrices->srp_discounted         = $getAmountDisc[$i]; 
+                                    }else{
+                                        $customerPrices->srp_discounted         = 0;
+                                    }
+                                 
+                                    
+                                    if (isset($getPercentDisc[$i])){
+                                        $customerPrices->percentage_discount    = $getPercentDisc[$i];               
+                                    }else{
+                                        $customerPrices->percentage_discount    = 0;
+                                    }
+                                    
+
+                                    $customerPrices->activated_discount     = $activeDisc;
+
+                                    if (isset($getPercentDisc[$i])){
+                                        $customerPrices->set_srp                = $getPercentDisc[$i];              
+                                    }else{
+                                        $customerPrices->set_srp    = 0;
+                                    }
 
 
-        return redirect()->route('customer.index')
+                                    $customerPrices->save();
 
-            ->with('success','Customer has been updated successfully.');
+                                }
+                            }
+                           
+                        */
+
+         return back()->with('success','Customer has been updated successfully.');
     }
 
 

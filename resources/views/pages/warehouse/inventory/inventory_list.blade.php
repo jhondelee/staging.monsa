@@ -4,8 +4,9 @@
         <i class="fa fa-plus">&nbsp;</i>Inventory</a>
 
     @endif   
-     <a href="{{route('inventory.print')}}" class="btn btn-info btn-sm print-inventory-item">
+     <!--<a href="{{route('inventory.print')}}" class="btn btn-info btn-sm print-inventory-item">
         <i class="fa fa-print">&nbsp;</i>Print Warehouse</a>
+    -->
          <a href="{{route('inventory.print-inventory')}}" class="btn btn-info btn-sm print-inventory-item">
         <i class="fa fa-print">&nbsp;</i>Print Inventory</a>
     <div class="hr-line-dashed"></div>

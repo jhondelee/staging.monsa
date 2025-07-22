@@ -53,7 +53,7 @@ class SalesPaymentController extends Controller
     {
 
         $results =  SalesOrder::where('so_number',$request->id)->first();
-
+        
         return response()->json($results); 
       
     }
@@ -147,7 +147,7 @@ class SalesPaymentController extends Controller
         $salespayments = SalesPayment::findOrfail($request->sales_payment_id);
 
         $total_paid =  $this->salespayment->totalpaid($request->sales_payment_id)->first();
-
+ 
         $totalSales = $salespayments->sales_total ;
 
         $totalPayment = $total_paid->amount +  $request->amount_collected;
@@ -221,7 +221,7 @@ class SalesPaymentController extends Controller
                     ->with('success','Customer Amount Due has been Completed!');
         } else {
 
-            return redirect()->route('sales_payment.collect',$request->sales_payment_id)
+            return redirect()->route('sales_payment.update',$request->sales_payment_id)
 
                     ->with('success','Payment terms has been added successfully.');
 

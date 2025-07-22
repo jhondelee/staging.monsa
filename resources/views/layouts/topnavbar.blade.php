@@ -5,9 +5,6 @@
             <a class="navbar-minimalize minimalize-styl-2 btn btn-primary" href="#"><i class="fa fa-bars"></i></a>
         </div>
         <ul class="nav navbar-top-links navbar-right">
-             <li>
-                <h2>(STAGING SERVER) </h2>
-            </li>
             <li>
                 <span class="m-r-sm text-muted welcome-message">Welcome to MONSA Trading</span>
             </li>

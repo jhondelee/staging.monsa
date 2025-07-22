@@ -30,7 +30,7 @@
                     </td>
                     <td>{{$returnList->description}}</td>
                     <td>{{$returnList->units}}</td>
-                    <td>{{$returnList->onhand_quantity}}</td>
+                    <td>{{$returnList->unit_quantity}}</td>
                     <td>{{$returnList->location}}</td>
                     <td class="text-center">
                             <div class="btn-group tooltip-demo">

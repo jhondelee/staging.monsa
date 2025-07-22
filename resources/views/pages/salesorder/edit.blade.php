@@ -197,7 +197,8 @@
             var _setQty =  parseFloat($(this).closest( 'tr' ).find( '#setQty' ).val());
             var _unitQty =  parseFloat($(this).closest( 'tr' ).find( '#unitQty' ).val());
             var _itemID =  parseFloat($(this).closest( 'tr' ).find( '#item_id' ).val());
-            var _total_amount = 0.00;
+            var _total_actual_amount = 0.00;
+            var _total_amount = 0.00;   
             var _total_dis_amount = 0.00;
             var _total_dis_percent = 0.00;
 
@@ -226,6 +227,8 @@
                 success:function(results){
 
                             var _Gamount = _setQty * parseFloat( results.csPrice.set_srp );
+
+
                 //
                           $('#dTable-selected-item-table tbody').append("<tr><td><input type='text' name='invenId[]' class='form-control input-sm text-center invenId' size='3'  value="+ results.invenId.id +" readonly></td>\
                             <td>"+ results.csPrice.description +"</td>\
@@ -237,27 +240,42 @@
 
 
                         $( "#dTable-selected-item-table tbody > tr" ).each( function() {
-                                var $row = $( this );        
+                                var $row = $( this );
+                                var _act_set_qty = $row.find( ".setQty" ).val();
+                                var _actual_price = $row.find( ".setPrice" ).val();        
                                 var _subtotal = $row.find( ".gAmount" ).val();
                                 var _dis_amount = $row.find( ".dis_amount" ).val();
                                 var _dis_percent = $row.find( ".dis_percent" ).val();
-            
+                 
+                        _total_actual_amount += _act_set_qty * _actual_price ;
+             
                         _total_amount += parseFloat( ('0' + _subtotal).replace(/[^0-9-\.]/g, ''), 10 );
                         
-                         _total_dis_amount += parseFloat( ('0' + _dis_amount).replace(/[^0-9-\.]/g, ''), 10 );
+                        _total_dis_amount += parseFloat( ('0' + _dis_amount).replace(/[^0-9-\.]/g, ''), 10 );
                            
                         _total_dis_percent += parseFloat( ('0' + _dis_percent).replace(/[^0-9-\.]/g, ''), 10 );
 
                         });
-
+                        
+                        _total_actual_amount = _total_actual_amount.toFixed(2);
+                        $('#total_subamount').val(  _total_actual_amount  );
+                   
                          _total_amount = _total_amount.toFixed(2);
                         $('#total_sales').val(  _total_amount  );
+
+
+                            _total_dis_amount = _total_actual_amount - _total_amount;
+
 
                          _total_dis_amount = _total_dis_amount.toFixed(2);
                         $('#total_amount_discount').val(  _total_dis_amount  );
 
+                        
+
                          _total_dis_percent = _total_dis_percent.toFixed(2);
                         $('#total_percent_discount').val(  _total_dis_percent  );
+
+
                     }
                 });
             }   
@@ -267,32 +285,46 @@
        $('#dTable-selected-item-table').on('click', '#delete_line', function(){
 
             $(this).closest('tr').remove();  
-                
+                var _total_actual_amount = 0.00;
                 var _total_amount = 0;
                 var _total_dis_amount = 0;
                 var _total_dis_percent = 0;
                     
                      $( "#dTable-selected-item-table tbody > tr" ).each( function() {
                             var $row = $( this );        
+                            var _act_set_qty = $row.find( ".setQty" ).val();
+                            var _actual_price = $row.find( ".setPrice" ).val(); 
                             var _subtotal = $row.find( ".gAmount" ).val();
                             var _dis_amount = $row.find( ".dis_amount" ).val();
                             var _dis_percent = $row.find( ".dis_percent" ).val();
+
+                        _total_actual_amount += _act_set_qty * _actual_price ;
                     
                         _total_amount += parseFloat( ('0' + _subtotal).replace(/[^0-9-\.]/g, ''), 10 );
                             
                         _total_dis_amount += parseFloat( ('0' + _dis_amount).replace(/[^0-9-\.]/g, ''), 10 );
                            
                         _total_dis_percent += parseFloat( ('0' + _dis_percent).replace(/[^0-9-\.]/g, ''), 10 ); 
+
                     });
+
+                _total_actual_amount = _total_actual_amount.toFixed(2);
+                $('#total_subamount').val(  _total_actual_amount  );
 
                 _total_amount = _total_amount.toFixed(2);
                 $('#total_sales').val(  _total_amount  );
 
-                _total_dis_amount = _total_dis_amount.toFixed(2);
-                $('#discount_amount').val(  _total_dis_amount  );
 
+                _total_dis_amount = _total_actual_amount - _total_amount;
+                
+
+                _total_dis_amount = _total_dis_amount.toFixed(2);
+                $('#total_amount_discount').val(  _total_dis_amount  );
+
+          
                 _total_dis_percent = _total_dis_percent.toFixed(2);
-                $('#discount_percentage').val(  _total_dis_percent  );
+                $('#total_percent_discount').val(  _total_dis_percent  );
+
 
         });
 
@@ -330,8 +362,6 @@
 
  
         $('.chosen-select').chosen({width: "100%"});
-
-
         
         function confirmPost(data,model) {   
          $('#confirmPost').modal({ backdrop: 'static', keyboard: false })

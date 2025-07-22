@@ -106,27 +106,61 @@ class InventoryController extends Controller
         $this->validate($request, [
             'item_name'     => 'required',
             'quantity'      => 'required',
-            'received_date' => 'required',
             'location'      => 'required',
             'created_by'   => 'required'
         ]);
 
-        $items = $this->items->getiteminfo($request->item_name)->first();
 
-        $item_unit_qty = $request->quantity;
+        $ifexistItem = Inventory::where('item_id', $request->item_name)->where('location', $request->location)->first();
 
-        $inventory = New Inventory;
-        $inventory->item_id           = $request->item_name;
-        $inventory->unit_quantity     = $request->quantity;
-        $inventory->onhand_quantity   = $item_unit_qty;
-        $inventory->unit_cost         = $request->unit_cost;
-        $inventory->location          = $request->location;
-        $inventory->received_date     = $request->received_date;
-        $inventory->expiration_date   = $request->expiry_date;
-        $inventory->status            = 'In Stock';
-        $inventory->consumable         = 0;
-        $inventory->created_by        = $request->created_by;
-        $inventory->save();
+        if(!$ifexistItem)
+
+            {
+
+                $inventory = New Inventory;
+                $inventory->item_id           = $request->item_name;
+                $inventory->unit_quantity     = $request->quantity;
+                $inventory->onhand_quantity   = 0;
+                $inventory->unit_cost         = $request->unit_cost;
+                $inventory->location          = $request->location;
+                $inventory->received_date     = $request->received_date;
+                $inventory->expiration_date   = $request->expiry_date;
+                $inventory->status            = 'In Stock';
+                $inventory->consumable         = 0;
+                $inventory->created_by        = $request->created_by;
+                $inventory->save();
+
+            } else {
+
+                $inventory = Inventory::findorfail($ifexistItem->id);
+           
+                    $newQty = $inventory->unit_quantity + $request->quantity;
+
+                $inventory->unit_quantity = $newQty;
+
+                $inventory->unit_cost   = $request->unit_cost;
+
+                $inventory->save();
+
+            }
+                            /*
+                            $items = $this->items->getiteminfo($request->item_name)->first();
+
+                            $item_unit_qty = $request->quantity;
+
+                            $inventory = New Inventory;
+                            $inventory->item_id           = $request->item_name;
+                            $inventory->unit_quantity     = $request->quantity;
+                            $inventory->onhand_quantity   = $item_unit_qty;
+                            $inventory->unit_cost         = $request->unit_cost;
+                            $inventory->location          = $request->location;
+                            $inventory->received_date     = $request->received_date;
+                            $inventory->expiration_date   = $request->expiry_date;
+                            $inventory->status            = 'In Stock';
+                            $inventory->consumable         = 0;
+                            $inventory->created_by        = $request->created_by;
+                            $inventory->save();
+                            */
 
         return redirect()->route('inventory.index')
 
@@ -161,8 +195,8 @@ class InventoryController extends Controller
     
         $pdf = new Fpdf('P');
         $pdf::AddPage('P','A4');
-        $pdf::Image('/home/u648374046/domains/monsais.net/public_html/public/img/monsa-logo-header.jpg',10, 5, 30.00);
-        //$pdf::Image('img/temporary-logo.jpg',5, 5, 40.00);
+        //$pdf::Image('/home/u648374046/domains/monsais.net/public_html/public/img/monsa-logo-header.jpg',10, 5, 30.00);
+        $pdf::Image('img/temporary-logo.jpg',5, 5, 40.00);
         $pdf::SetFont('Arial','B',12);
         $pdf::SetY(20);     
 
@@ -211,7 +245,7 @@ class InventoryController extends Controller
             $pdf::cell(55,6,$value->name,0,"","L");
 
             $pdf::cell(20,6,$value->units,0,"","C");
-            $pdf::cell(30,6,number_format($value->onhand_quantity,2),0,"","C");
+            $pdf::cell(30,6,number_format($value->unit_quantity,2),0,"","C");
              $pdf::cell(33,6,$value->location,0,"","C");
             $pdf::cell(30,6,($value->status),0,"","C");
         }
@@ -266,8 +300,8 @@ class InventoryController extends Controller
    
         $pdf = new Fpdf('P');
         $pdf::AddPage('P','A4');
-        $pdf::Image('/home/u648374046/domains/monsais.net/public_html/public/img/monsa-logo-header.jpg',10, 5, 30.00);
-        //$pdf::Image('img/temporary-logo.jpg',5, 5, 40.00);
+        //$pdf::Image('/home/u648374046/domains/monsais.net/public_html/public/img/monsa-logo-header.jpg',10, 5, 30.00);
+        $pdf::Image('img/temporary-logo.jpg',5, 5, 40.00);
         $pdf::SetFont('Arial','B',12);
         $pdf::SetY(20);     
 
@@ -306,7 +340,7 @@ class InventoryController extends Controller
         $pdf::cell(30,6,"_________________________________________________________________________________________________________",0,"","L");
         
         $inventories = $this->inventory->getinventory();
-
+        
         foreach ($inventories as $key => $value) {
 
             $pdf::Ln(5);
@@ -423,42 +457,52 @@ class InventoryController extends Controller
 
 
         $items = $this->items->getiteminfo($request->item_id)->first();
+        
+         $ifexistItem = Inventory::where('item_id', $items->id)->where('location', $request->inv_loc)->first();
 
-        //$item_unit_qty = $items->unit_quantity * $request->unti_qty_i;
+        if(!$ifexistItem)
+
+            {
 
 
-        $inventory = New Inventory;
+                $inventory = New Inventory;
 
-        $inventory->item_id           = $request->item_id;
+                $inventory->item_id           = $request->item_id;
+                $inventory->unit_quantity     = $request->unti_qty_i;
+                $inventory->onhand_quantity   = 0;
+                $inventory->unit_cost         = $items->unit_cost;
+                $inventory->location          = $request->inv_loc;
+                $inventory->received_date     = $request->return_date;
+                $inventory->status            = 'In Stock';
+                $inventory->consumable         = 0;
+                $inventory->created_by        = $request->return_by;
 
-        $inventory->unit_quantity     = $request->unti_qty_i;
+                $inventory->save();
 
-        $inventory->onhand_quantity   = $request->unti_qty_i;
+            } else {
 
-        $inventory->unit_cost         = $items->unit_cost;
+                $inventory = Inventory::findorfail($ifexistItem->id);
+                
+                    $newQty = $inventory->unit_quantity + $request->unti_qty_i;
 
-        $inventory->location          = $request->inv_loc;
+                $inventory->unit_quantity = $newQty;
 
-        $inventory->received_date     = $request->return_date;
+                $inventory->unit_cost   = $request->unit_cost;
 
-        $inventory->status            = 'In Stock';
+                $inventory->save();
 
-        $inventory->consumable         = 0;
+            }
+                   
 
-        $inventory->created_by        = $request->return_by;
-
-        $inventory->save();
-
+        //Less into return
 
         $inventories = Inventory::findorfail($request->inven_item_id);
       
         $untiQTY = $inventories->unit_quantity - $request->unti_qty_i;
 
-        $onHndQTY = $inventories->onhand_quantity -  $request->unti_qty_i;
-
         $inventories->unit_quantity =  $untiQTY;
 
-        $inventories->onhand_quantity = $onHndQTY;
+        $inventories->onhand_quantity = 0;
 
         $inventories->save();
    

@@ -17,10 +17,15 @@ class Factory implements SetInterface
           i.po_number,
           i.dr_number,
           i.dr_date,
+          s.name AS supplier,
           CONCAT(e.firstname,' ',e.middlename,'. ',e.lastname) AS received_by,
           i.`status` FROM incomings i
           INNER JOIN employees e
           ON i.received_by = e.id
+          INNER JOIN orders o
+          ON o.id = i.order_id
+          INNER JOIN suppliers s
+          ON s.id = o.supplier_id
           ORDER BY i.id DESC;");
 
         return collect($results);

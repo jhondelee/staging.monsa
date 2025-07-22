@@ -11,9 +11,9 @@
             <div>
 
                 <h1 class="logo-name">
-                    <h2>STAGING SERVER</h2>
-                    <center>
 
+                    <center>
+                        
                         <img alt="image" width="150" height="150" class="img-responsive " src="/img/temporary-logo.jpg"/>
 
                     </center>

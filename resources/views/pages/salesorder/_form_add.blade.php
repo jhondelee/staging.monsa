@@ -122,26 +122,27 @@
                                             {!! Form::text('total_amount_added',null, array('placeholder' => '0.00','class' => 'form-control text-right total_amount_added','id'=>'total_amount_added', 'readonly' => 'true')) !!}
                                         </div>
                                     </div>
-
-                                    <div class="form-group">
-                                        <label class="col-md-6 control-label">% Added</label>
-                                        <div class="col-md-6">
-                                            {!! Form::text('total_percent_added',null, array('placeholder' => '0.00','class' => 'form-control text-right total_percent_added','id'=>'total_percent_added', 'readonly' => 'true')) !!}
-                                        </div>
-                                    </div>-->
-                                    <div class="form-group">
-                                        <label class="col-md-6 control-label">₱ Discount</label>
-                                        <div class="col-md-6">
-                                            {!! Form::text('total_amount_discount',null, array('placeholder' => '0.00','class' => 'form-control text-right total_amount_discount','id'=>'total_amount_discount', 'readonly' => 'true')) !!}
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
+                                                                        <div class="form-group">
                                         <label class="col-md-6 control-label">% Discount</label>
                                         <div class="col-md-6">
                                             {!! Form::text('total_percent_discount',null, array('placeholder' => '0.00','class' => 'form-control text-right total_percent_discount','id'=>'total_percent_discount', 'readonly' => 'true')) !!}
                                         </div>
                                     </div>
+                                    -->
+                                    <div class="form-group">
+                                        <label class="col-md-6 control-label">Subtotal</label>
+                                        <div class="col-md-6">
+                                            {!! Form::text('total_subamount',$subAmount, array('placeholder' => '0.00','class' => 'form-control text-right total_subamount','id'=>'total_subamount', 'readonly' => 'true')) !!}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-6 control-label"> Amount Discount</label>
+                                        <div class="col-md-6">
+                                            {!! Form::text('total_amount_discount',null, array('placeholder' => '0.00','class' => 'form-control text-right total_amount_discount','id'=>'total_amount_discount', 'readonly' => 'true')) !!}
+                                        </div>
+                                    </div>
+
+
                                     <div class="form-group">
                                         <label class="col-md-6 control-label">Total Amount</label>
                                         <div class="col-md-6">

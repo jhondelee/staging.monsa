@@ -151,7 +151,7 @@
          $('#confirmCancel').modal({ backdrop: 'static', keyboard: false })
             .on('click', '#cancel-btn', function(){
                 $(this).attr("disabled","disabled");
-                document.location.href="/salesorder/cancel/"+data;
+                document.location.href="/sales/cancel/"+data;
             });
         }
 
@@ -160,7 +160,7 @@
          $('#confirmDelete').modal({ backdrop: 'static', keyboard: false })
             .on('click', '#delete-btn', function(){
                 $(this).attr("disabled","disabled");
-                document.location.href="/salesorder/delete/"+data;
+                document.location.href="/sales/delete/"+data;
             });
     }
         

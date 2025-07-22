@@ -54,8 +54,8 @@ class Factory implements SetInterface
     {
 
         $results = DB::select("
-            SELECT s.id,
-                     s.item_id ,
+            SELECT  s.id,
+                     s.item_id,
                      i.name AS item_name,
                      i.description,
                      u.code AS unit,
@@ -76,16 +76,19 @@ class Factory implements SetInterface
     {
 
         $results = DB::select("
-            SELECT s.id,
+                SELECT s.id,
                      s.item_id ,
                      i.name AS item_name,
                      i.description,
                      u.code AS unit,
                      s.item_quantity, 
-                     s.return_quantity,
-                     s.unit_cost,
-                     s.srp 
+                     ifnull(s.return_quantity,0) AS return_quantity,
+                     so.set_srp,
+                     so.unit_cost,
+                     REPLACE(FORMAT(ifnull(s.return_quantity * so.set_srp,0), 2), ',', '') AS amount
             FROM return_items s
+            INNER JOIN returns r ON r.id = s.returns_id
+            INNER JOIN sales_order_items so ON so.so_number = r.so_number AND s.item_id = so.item_id
             INNER JOIN items i ON s.item_id = i.id
             INNER JOIN unit_of_measure u ON u.id = i.unit_id
             WHERE s.returns_id = ?;",[$id]);

@@ -72,7 +72,7 @@
                                 
     <div class="table-responsive">
                                  
-        <table class="table table-bordered dTable-receive-item-table" id="dTable-receive-item-table">                  
+        <table class="table table-bordered dTable-return-item-table" id="dTable-return-item-table">                  
 
             <thead> 
                 
@@ -82,8 +82,10 @@
                     <th>Item Name</th>
                     <th>Unit</th>
                     <th class="text-center">Order Qty</th>
+                    <th class="text-center">SRP</th>
                     <th class="text-center">Return Qty</th>
-
+                    <th class="text-center">Amount </th>
+                 
 
                 </tr>
 
@@ -98,12 +100,32 @@
         
         <hr>
     </div>
-
-                               
-    <div class="hr-line-dashed"></div>
     <div class="row">
+    <div class="col-md-8 form-horizontal"></div>
+        <div class="col-md-4 form-horizontal pull-right">
+        
+            <div class="form-group">
+
+                <label class="col-md-6 control-label">Total Amount</label>
+
+                    <div class="col-md-6">
+
+                        {!! Form::text('total_amount',$returns->amount, array('placeholder' => '0.00','class' => 'form-control text-right total_amount','style'=>'font-weight:bold;','id'=>'total_amount', 'readonly' => 'true' )) !!}
+
+                    </div>
+
+            </div>
+
+        </div> 
+
+    </div>
+
+    <div class="hr-line-dashed"></div>
+
+    <div class="row">
+
         <div class="col-md-12 form-horizontal">
- 
+                                             
             <div class="ibox-tools pull-right">
                  
                 <button type="button" class="btn btn-danger btn-close" id="btn-close"><i class="fa fa-reply">&nbsp;</i>Back</button>
@@ -119,4 +141,6 @@
 
     </div>
     </div>
+
+
 

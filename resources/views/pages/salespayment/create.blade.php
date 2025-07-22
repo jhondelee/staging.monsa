@@ -169,7 +169,7 @@
                     data: { _token: "{{ csrf_token() }}",
                     id: _soNumberID},  
                     success:function(results){
-
+                         
                         $('#so_date').val( results.so_date );
                         toastr.info('Selected SO Payment Terms', _so )
                     }
@@ -191,7 +191,7 @@
                 }
                 if ( _tyep =='Fully Paid' ){
 
-                    $('#payment_status').val('Completed');
+                    $('#payment_status').val('Existing Balance');
 
                 }
                 if ( !_tyep ){

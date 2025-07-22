@@ -33,15 +33,16 @@ class Factory implements SetInterface
 				 	  so.status AS so_status,
 					  CONCAT(sub.firstname ,' ',sub.lastname ) AS sub_agent,
 					  so.sub_employee_id,
-					  cs.name cs_name,
+					  cs.name as cs_name,
 					  cr.rate,
-					  format(cr.rate * so.total_sales,2) AS amount_com,
+					  REPLACE(FORMAT(cr.rate * so.total_sales, 2), ',', '') AS amount_com,
 			 		  so.total_sales
 		FROM sales_order so
 		LEFT  JOIN employees sub ON sub.id = so.sub_employee_id
-		INNER JOIN customers cs ON so.customer_id = cs.id
-		INNER JOIN commission_rate cr ON cr.id = cs.area_id
-		WHERE so.employee_id = ? AND so.status = 'POSTED';",[$empId]);
+		LEFT JOIN customers cs ON so.customer_id = cs.id
+		LEFT JOIN assign_area aa ON aa.area_id = cs.area_id
+		LEFT JOIN commission_rate cr ON cr.id = aa.rate_id
+		WHERE so.employee_id = ? AND so.status IN( 'CLOSED','POSTED');",[$empId]);
      
         return collect($results);
     } 

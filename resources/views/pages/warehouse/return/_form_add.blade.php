@@ -86,18 +86,21 @@
                                 
     <div class="table-responsive">
                                  
-        <table class="table table-bordered dTable-receive-item-table" id="dTable-receive-item-table">                  
+        <table class="table table-bordered dTable-return-item-table" id="dTable-return-item-table">                  
 
             <thead> 
                 
                 <tr>
                     
+                    
                     <th class="text-center">Id</th>
                     <th>Item Name</th>
                     <th>Unit</th>
                     <th class="text-center">Order Qty</th>
+                    <th class="text-center">SRP</th>
                     <th class="text-center">Return Qty</th>
-
+                    <th class="text-center">Amount </th>
+                 
 
                 </tr>
 
@@ -112,7 +115,25 @@
         
         <hr>
     </div>
+    <div class="row">
+    <div class="col-md-8 form-horizontal"></div>
+        <div class="col-md-4 form-horizontal pull-right">
+        
+            <div class="form-group">
 
+                <label class="col-md-6 control-label">Total Amount</label>
+
+                    <div class="col-md-6">
+
+                        {!! Form::text('total_amount',null, array('placeholder' => '0.00','class' => 'form-control text-right total_amount','id'=>'total_amount', 'readonly' => 'true' )) !!}
+
+                    </div>
+
+            </div>
+
+        </div> 
+
+    </div>
                                
     <div class="hr-line-dashed"></div>
     <div class="row">

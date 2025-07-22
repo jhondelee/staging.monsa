@@ -23,7 +23,7 @@
                     <td>{{ date('d-M-y', strtotime($cancel->so_date))}}</td>
                     <td>{{$cancel->customer}}</td>
                     <td>{{$cancel->sales_agent}}</td>
-                    <td class="text-right">{{number_format($cancel->sales_total,2)}}</td>
+                    <td class="text-right">{{number_format($cancel->total_sales,2)}}</td>
 
                     <td class="text-center">
                         <label class="label label-danger" >{{$cancel->status}}</label> 

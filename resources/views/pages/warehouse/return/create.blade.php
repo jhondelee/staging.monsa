@@ -103,14 +103,14 @@
 
       
                     $.ajax({
-                    url:  '{{ url('returns/show-so') }}',
+                    url:  '{{ url("returns/show-so") }}',
                     type: 'POST',
                     dataType: 'json',
                     data: { _token: "{{ csrf_token() }}",
                     so_num: so_num}, 
                     success:function(results){
                        
-                        $('#dTable-receive-item-table tbody').empty();
+                        $('#dTable-return-item-table tbody').empty();
                         toastr.warning('SO# '+ results.so.so_number,'Shown')
                         $('#lbl_so_number').val(  results.so.so_number  );
                         $('#lbl_so_date').val(  results.so.so_date  );
@@ -118,11 +118,13 @@
                         $('#location').val( results.so.location ).trigger("chosen:updated");
 
                             for(var i=0 ;i<=results.soitems.length;i++) {
-
-                                $('#dTable-receive-item-table tbody').append("<tr><td><input type='text' name='return_id[]' class='form-control input-sm text-center return_id' size='3'  value="+ results.soitems[i].id +" readonly/></td>\
-                                    <td>"+ results.soitems[i].item_name +"</td><td>"+ results.soitems[i].unit +"</td><td><input type='text' name='order_quantity[]' class='form-control input-sm text-center item_quantity' size='4' value="+ results.soitems[i].order_quantity +" id ='item_quantity' readonly /></td><td><input type='text' name='return_qty[]' class='form-control input-sm text-center return_qty' size='4' id ='return_qty'/></td></tr>");
+                                $('#dTable-return-item-table tbody').append("<tr><td><input type='text' name='return_id[]' class='form-control input-sm text-center return_id' size='3'  value="+ results.soitems[i].id +" readonly/></td>\
+                                    <td>"+ results.soitems[i].description +"</td><td>"+ results.soitems[i].unit +"</td><td><input type='text' name='order_quantity[]' class='form-control input-sm text-center item_quantity' size='4' value="+ results.soitems[i].order_quantity +" id ='item_quantity' readonly /></td><td><input type='text' name='set_srp[]' class='form-control input-sm text-center set_srp' size='4' value="+ results.soitems[i].set_srp +"  readonly id ='set_srp'/></td><td><input type='text' name='return_qty[]' class='form-control input-sm text-center return_qty' size='4' id ='return_qty' placeholder='0' /></td><td><b><input type='text' name='gAmount[]' class='form-control input-sm text-right gAmount' size='6'  id='gAmount' placeholder='0.00' readonly></b></td></tr>");
 
                             }
+
+
+
                         
                         }
                     });
@@ -133,18 +135,36 @@
         });
 
                 // compare input quanity
-        $('#dTable-receive-item-table').on('keyup','.return_qty',function(e){
+        $('#dTable-return-item-table').on('keyup','.return_qty',function(e){
         var _returnQty = parseFloat($(this).closest( 'tr ').find( '#return_qty' ).val());
         var _itemQty = parseFloat($(this).closest( 'tr' ).find( '#item_quantity' ).val());
+        var _setSRP = parseFloat($(this).closest( 'tr' ).find( '#set_srp' ).val());
+        var _total_amount = 0;
 
              if ( _returnQty > _itemQty ){
 
                     toastr.warning('the return quantity is too much','Warning');
                     $(this).closest('tr').find( '#return_qty' ).val( '0' )
                     return false;
-             } 
+             } else {
+
+                    var _Qty = $(this).val();
+                    var _gAmount = (_setSRP * _Qty);
+                     _gAmount = _gAmount.toFixed(2);
+                    $(this).closest('tr').find( '#gAmount' ).val( _gAmount );
+             }
+
+             $( "#dTable-return-item-table tbody > tr" ).each( function() {
+                var $row = $( this );
+                var _subtotal = $row.find( ".gAmount" ).val();
+                _total_amount += parseFloat( ('0' + _subtotal).replace(/[^0-9-\.]/g, ''), 10 );
+             });
+             _total_amount = _total_amount.toFixed(2);
+            $('#total_amount').val( _total_amount );
         
         }); 
+
+
 
         // allow only numeric with decimal
         $("#return_qty").on("keypress keyup blur",function (event) {

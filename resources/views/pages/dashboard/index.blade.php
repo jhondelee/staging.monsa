@@ -52,8 +52,6 @@
                                 <div class="font-bold text-navy">0% <i class="fa fa-level-up"></i> <small>Orders</small></div>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
             </div>
@@ -313,6 +311,7 @@
                                             {data: 'name', title: 'Name'},    
                                             {data: 'description', title: 'Description'},
                                             {data: 'units', title: 'Units'},
+                                            {data: 'onhand_quantity', title: 'Quantity'},
                                             {data: 'status', title: 'Status',
                                                 render: function(data, type, row){
                                                     if(row.status=='In Stock'){
@@ -363,6 +362,7 @@
                                             {data: 'name', title: 'Name'},    
                                             {data: 'description', title: 'Description'},
                                             {data: 'units', title: 'Units'},
+                                            {data: 'onhand_quantity', title: 'Quantity'},
                                             {data: 'status', title: 'Status',
                                                 render: function(data, type, row){
                                                     if(row.status=='In Stock'){
@@ -387,7 +387,7 @@
        
      });
 
- 
+    /*
         $(document).ready(function() {
             let  _salesVal = [];
             var _val;
@@ -482,6 +482,8 @@
                 });            
 
         });
+        
+        */
     </script>
     
 @endsection

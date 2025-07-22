@@ -119,7 +119,7 @@
                                                     <td>{{$showItemsLocation->location}}</td>
                                                     <td>{{$showItemsLocation->code}}</td>
                                                     <td>{{$showItemsLocation->units}}</td>
-                                                    <td>{{$showItemsLocation->onhand_quantity}}</td>
+                                                    <td>{{$showItemsLocation->unit_quantity}}</td>
                                                     <td>{{$showItemsLocation->received_date}}</td>
                                                 </tr>
                                             @endforeach 

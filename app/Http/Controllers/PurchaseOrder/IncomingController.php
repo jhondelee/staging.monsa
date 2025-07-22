@@ -255,13 +255,13 @@ class IncomingController extends Controller
         for ( $i=0 ; $i < count($item_id) ; $i++ ){
 
             $items = $this->items->getindex()->where('id', $item_id[$i])->first();
-
+      
             $incoming_items                         = New IncomingItem;
 
             $incoming_items->incoming_id            = $incoming_id ;
 
             $incoming_items->item_id                = $items->id;
-
+            
             $incoming_items->received_quantity      = $received_qty[$i];
 
             $incoming_items->unit_cost              = $item_unit_cost[$i];
@@ -269,7 +269,6 @@ class IncomingController extends Controller
             $incoming_items->unit_total_cost        = $total_unit_cost[$i];
 
             $incoming_items->save();
-
 
         }
 

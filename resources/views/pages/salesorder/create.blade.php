@@ -179,6 +179,7 @@
             var _total_dis_percent = 0.00;
             var _total_add_amount = 0.00;
             var _total_add_percent = 0.00;
+            var _total_actual_amount = 0.00;
 
             if ( isNaN( _setQty) || !_setQty ){
 
@@ -217,13 +218,14 @@
                                 if (!results.csPrice.dis_amount == false  && results.csPrice.dis_percent > 0){
 
                                     var _per = ( parseFloat(results.csPrice.dis_percent) / 100 ) * _newSRP ;
+
                                     _setSRP = _newSRP - _per;
 
                                 }
 
                                 if (results.csPrice.dis_amount > 0 && !results.csPrice.dis_percent == false ){
 
-                                    _setSRP = _newSRP + parseFloat(results.csPrice.dis_amount);
+                                    _setSRP = _newSRP - parseFloat(results.csPrice.dis_amount);
                                 }
                                 
                             } else {
@@ -245,29 +247,39 @@
 
 
                         $( "#dTable-selected-item-table tbody > tr" ).each( function() {
-                                var $row = $( this );        
-                                var _subtotal = $row.find( ".gAmount" ).val();
-                                var _dis_amount = $row.find( ".dis_amount" ).val();
-                                var _dis_percent = $row.find( ".dis_percent" ).val();
+                                var $row = $( this );
+                            var _act_set_qty = $row.find( ".setQty" ).val();
+                            var _actual_price = $row.find( ".setPrice" ).val(); 
+                            var _subtotal = $row.find( ".gAmount" ).val();
+                            var _dis_amount = $row.find( ".dis_amount" ).val();
+                            var _dis_percent = $row.find( ".dis_percent" ).val();
 
-                                 
-            
+                        _total_actual_amount += _act_set_qty * _actual_price ;
+                    
                         _total_amount += parseFloat( ('0' + _subtotal).replace(/[^0-9-\.]/g, ''), 10 );
-                        
+                            
                         _total_dis_amount += parseFloat( ('0' + _dis_amount).replace(/[^0-9-\.]/g, ''), 10 );
                            
-                        _total_dis_percent += parseFloat( ('0' + _dis_percent).replace(/[^0-9-\.]/g, ''), 10 );
+                        _total_dis_percent += parseFloat( ('0' + _dis_percent).replace(/[^0-9-\.]/g, ''), 10 ); 
 
 
                         });
 
-                         _total_amount = _total_amount.toFixed(2);
+                        _total_actual_amount = _total_actual_amount.toFixed(2);
+                        $('#total_subamount').val(  _total_actual_amount  );
+
+                        _total_amount = _total_amount.toFixed(2);
                         $('#total_sales').val(  _total_amount  );
 
-                         _total_dis_amount = _total_dis_amount.toFixed(2);
+
+                        _total_dis_amount = _total_actual_amount - _total_amount;
+ 
+
+                        _total_dis_amount = _total_dis_amount.toFixed(2);
                         $('#total_amount_discount').val(  _total_dis_amount  );
 
-                         _total_dis_percent = _total_dis_percent.toFixed(2);
+                  
+                        _total_dis_percent = _total_dis_percent.toFixed(2);
                         $('#total_percent_discount').val(  _total_dis_percent  );
 
                  
@@ -284,12 +296,17 @@
                 var _total_amount = 0;
                 var _total_dis_amount = 0;
                 var _total_dis_percent = 0;
+                var _total_actual_amount = 0.00;
                     
                      $( "#dTable-selected-item-table tbody > tr" ).each( function() {
-                            var $row = $( this );        
+                            var $row = $( this );  
+                            var _act_set_qty = $row.find( ".setQty" ).val();
+                            var _actual_price = $row.find( ".setPrice" ).val();      
                             var _subtotal = $row.find( ".gAmount" ).val();
                             var _dis_amount = $row.find( ".dis_amount" ).val();
                             var _dis_percent = $row.find( ".dis_percent" ).val();
+
+                        _total_actual_amount += _act_set_qty * _actual_price ;
                     
                         _total_amount += parseFloat( ('0' + _subtotal).replace(/[^0-9-\.]/g, ''), 10 );
                             
@@ -298,14 +315,21 @@
                         _total_dis_percent += parseFloat( ('0' + _dis_percent).replace(/[^0-9-\.]/g, ''), 10 ); 
                     });
 
+                _total_actual_amount = _total_actual_amount.toFixed(2);
+                $('#total_subamount').val(  _total_actual_amount  );
+
                 _total_amount = _total_amount.toFixed(2);
                 $('#total_sales').val(  _total_amount  );
+
+                _total_dis_amount = _total_actual_amount - _total_amount;
+
 
                 _total_dis_amount = _total_dis_amount.toFixed(2);
                 $('#discount_amount').val(  _total_dis_amount  );
 
+
                 _total_dis_percent = _total_dis_percent.toFixed(2);
-                $('#discount_percentage').val(  _total_dis_percent  );
+                $('#total_percent_discount').val(  _total_dis_percent  );
 
         });
 

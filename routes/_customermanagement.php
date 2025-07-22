@@ -17,7 +17,9 @@ Route::group(['prefix' => 'customer'], function() {
 
     Route::get('edit/{id}', 'CustomerController@edit')->name("customer.edit"); 
 
-    Route::post('doUpdate', 'CustomerController@doUpdate')->name("customer.update"); 
+    Route::post('doUpdate', 'CustomerController@doUpdate')->name("customer.doupdate"); 
+
+    Route::post('edit/{id}', 'CustomerController@update')->name("customer.update"); 
 
     Route::post('doDelete', 'CustomerController@doDelete')->name("customer.dodelete"); 
 
@@ -34,7 +36,8 @@ Route::group(['prefix' => 'customer'], function() {
     Route::post('cost-items', 'CustomerController@getItemCost')->name("customer.cost_items"); 
 
     Route::post('doDeactive', 'CustomerController@doDeactive')->name("customer.doDeactive"); 
- 
+
+
 });
 
 
