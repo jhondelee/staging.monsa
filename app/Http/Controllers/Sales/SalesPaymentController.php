@@ -136,6 +136,7 @@ class SalesPaymentController extends Controller
 
     public function storeitems(Request $request)
     {
+
         $this->validate($request, [
             'date_payment' => 'required',
             'trasanction_no' => 'required',
@@ -143,26 +144,34 @@ class SalesPaymentController extends Controller
             'amount_collected' => 'required',
             'collected_by' => 'required',
         ]);
-
+       
         $salespayments = SalesPayment::findOrfail($request->sales_payment_id);
 
         $total_paid =  $this->salespayment->totalpaid($request->sales_payment_id)->first();
  
         $totalSales = $salespayments->sales_total ;
 
-        $totalPayment = $total_paid->amount +  $request->amount_collected;
+        $totalPayment = 0;
+        $totalPayment = $totalPayment + $total_paid->amount ;
 
 
             $paymentterms = New SalesPaymentTerm;
 
             $paymentterms->sales_payment_id     = $request->sales_payment_id;
-
-            $paymentterms->date_payment         = $request->date_payment;
-
+                                                  
+            $paymentterms->date_payment         = date('Y-m-d', strtotime($request->date_payment));
+            
             $paymentterms->payment_mode_id      = $request->payment_mode_id;
 
             $paymentterms->trasanction_no       = $request->trasanction_no;
 
+            $postdated=null;
+            if (!empty($request->_post_dated)){
+                $postdated =date('Y-m-d',strtotime($request->_post_dated));
+            }
+                                                  
+            $paymentterms->post_dated           = $postdated;
+            
             $paymentterms->bank_name            = $request->bank_name;
 
             $paymentterms->bank_account_no      = $request->bank_account_no;
@@ -171,6 +180,8 @@ class SalesPaymentController extends Controller
 
             $paymentterms->amount_collected     = $request->amount_collected;
 
+            $paymentterms->status               = $request->status;
+
             $paymentterms->collected_by         = $request->collected_by;
 
             $paymentterms->created_by           = auth()->user()->id;
@@ -178,10 +189,73 @@ class SalesPaymentController extends Controller
             $paymentterms->save();
 
 
+               return redirect()->route('sales_payment.update',$request->sales_payment_id)
+
+                    ->with('success','Payment terms has been added successfully.');
+
+    }
+
+    public function updateitems(Request $request)
+    {
+
+        $this->validate($request, [
+            '_date_payment' => 'required',
+            '_trasanction_no' => 'required',
+            'payment_mode_id' => 'required',
+            '_amount_collected' => 'required',
+            'status' => 'required',
+            '_collected_by' => 'required'
+        ]);
+         
+        $salespayments = SalesPayment::findOrfail($request->salespayment_id);
+
+    
+            $paymentterms = SalesPaymentTerm::findOrfail($request->salespaymentterms_id);
+
+            $paymentterms->sales_payment_id     = $request->salespayment_id;
+                                                 
+            $paymentterms->date_payment         = date('Y-m-d', strtotime($request->_date_payment));
+
+            $paymentterms->payment_mode_id      = $request->payment_mode_id;
+
+            $paymentterms->trasanction_no       = $request->_trasanction_no;
+
+            $postdated=null;
+            if (!empty($request->_post_dated)){
+                $postdated =date('Y-m-d',strtotime($request->_post_dated));
+            }
+
+            $paymentterms->post_dated           = $postdated;
+
+            $paymentterms->bank_name            = $request->_bank_name;
+
+            $paymentterms->bank_account_no      = $request->_bank_account_no;
+
+            $paymentterms->bank_account_name    = $request->_bank_account_name;
+
+            $paymentterms->amount_collected     = $request->_amount_collected   ;
+
+            $paymentterms->status               = $request->status;
+
+            $paymentterms->collected_by         = $request->_collected_by;
+
+            $paymentterms->created_by           = auth()->user()->id;
+
+            $paymentterms->save();
+
+
+        $total_paid =  $this->salespayment->totalpaid($request->salespayment_id)->first();
+ 
+        $totalSales = $salespayments->sales_total ;
+
+        $totalPayment = 0 ;
+        $totalPayment = $totalPayment + $total_paid->amount;
+        
+
         if ( $totalPayment > $totalSales ){
 
 
-            $salesPayment = SalesPayment::find($request->sales_payment_id);
+            $salesPayment = SalesPayment::find($request->salespayment_id);
 
             $salesPayment->payment_status = 'Completed';
 
@@ -195,14 +269,14 @@ class SalesPaymentController extends Controller
             $salesorder->save();
 
 
-                return redirect()->route('sales_payment.update',$request->sales_payment_id)
+                return redirect()->route('sales_payment.update',$request->salespayment_id)
 
                     ->with('warning','Customer has been made an Overpayment Transaction.');
 
         } elseif ( $totalPayment == $totalSales ) {
 
 
-            $salesPayment = SalesPayment::find($request->sales_payment_id);
+            $salesPayment = SalesPayment::find($request->salespayment_id);
 
             $salesPayment->payment_status = 'Completed';
 
@@ -216,12 +290,12 @@ class SalesPaymentController extends Controller
             $salesorder->save();
 
             
-                return redirect()->route('sales_payment.update',$request->sales_payment_id)
+                return redirect()->route('sales_payment.update',$request->salespayment_id)
 
                     ->with('success','Customer Amount Due has been Completed!');
         } else {
 
-            return redirect()->route('sales_payment.update',$request->sales_payment_id)
+            return redirect()->route('sales_payment.update',$request->salespayment_id)
 
                     ->with('success','Payment terms has been added successfully.');
 
@@ -310,6 +384,12 @@ class SalesPaymentController extends Controller
         
         $pdf = new Fpdf('P');
         $pdf::AddPage('P','A4');
+
+        $pdf::SetFont('Arial','',7);
+        $pdf::cell(170,0,date("Y-m-d") ,0,"","R");
+        date_default_timezone_set("singapore");
+        $pdf::cell(0,0,date("h:i A"),0,"","L");
+        
         //$pdf::Image('/home/u648374046/domains/monsais.net/public_html/public/img/monsa-logo-header.jpg',10, 5, 30.00);
         $pdf::Image('img/temporary-logo.jpg',5, 5, 40.00);
         $pdf::SetFont('Arial','B',12);
@@ -387,7 +467,7 @@ class SalesPaymentController extends Controller
             $pdf::SetFont('Arial','',9);
             $pdf::cell(10,6,$order_number=$order_number+1,0,"","L");
             $pdf::cell(30,6,$value->date_payment,0,"","L");
-            $pdf::cell(30,6,$value->trasanction_no,0,"","L");
+            $pdf::cell(30,6,$value->transaction_no,0,"","L");
             $pdf::cell(30,6,$value->modes,0,"","L");
             $pdf::cell(30,6,$value->bank_name,0,"","L");
             $pdf::cell(30,6,$value->collected_by,0,"","L");
