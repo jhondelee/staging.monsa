@@ -1,4 +1,4 @@
-    
+        
 @extends('layouts.app')
 
 @section('pageTitle','Sales Payment')
@@ -157,6 +157,11 @@
 <script src="/js/plugins/toastr/toastr.min.js"></script>
 
 <script type="text/javascript">
+        $('.so_date').datepicker({
+            autoclose: true,
+            format:'mm-dd-yyyy'
+         });
+
     $(document).ready(function(){
             $('#btn-search').on('click',function(){
                 var _soNumberID  = $('#search').val();

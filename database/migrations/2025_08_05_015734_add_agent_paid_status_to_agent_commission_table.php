@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddInventoryidToEndingInventoryItems extends Migration
+class AddAgentPaidStatusToAgentCommissionTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class AddInventoryidToEndingInventoryItems extends Migration
      */
     public function up()
     {
-        Schema::table('ending_inventory_items', function (Blueprint $table) {
-
-             $table->integer('inventory_id')->after('ending_inventory_id');
-
+        Schema::table('agent_commission', function (Blueprint $table) {
+            $table->tinyInteger('agent_paid_status')->default(0)->after('total_sales');
         });
     }
 
@@ -27,8 +25,8 @@ class AddInventoryidToEndingInventoryItems extends Migration
      */
     public function down()
     {
-        Schema::table('ending_inventory_items', function (Blueprint $table) {
-            $table->dropColumn('inventory_id');
+        Schema::table('agent_paid_status', function (Blueprint $table) {
+            //
         });
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddInventoryidToEndingInventoryItems extends Migration
+class AddCollectedStatusToSalesPaymentTermsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class AddInventoryidToEndingInventoryItems extends Migration
      */
     public function up()
     {
-        Schema::table('ending_inventory_items', function (Blueprint $table) {
-
-             $table->integer('inventory_id')->after('ending_inventory_id');
-
+        Schema::table('sales_payment_terms', function (Blueprint $table) {
+            $table->enum('status', array('Pending','Complete', 'Redep ','Pull Out'))->after('amount_collected');
         });
     }
 
@@ -27,8 +25,10 @@ class AddInventoryidToEndingInventoryItems extends Migration
      */
     public function down()
     {
-        Schema::table('ending_inventory_items', function (Blueprint $table) {
-            $table->dropColumn('inventory_id');
+        Schema::table('sales_payment_terms', function (Blueprint $table) {
+               $table->dropColumn('status');
         });
     }
 }
+
+

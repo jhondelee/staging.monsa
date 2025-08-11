@@ -45,7 +45,15 @@
                                     {!! Form::select ('payment_mode_id',$payment_mode, null,['placeholder' => 'Choose Payment Mode...','class'=>'chosen-select required payment_mode_id'])!!}
                                 </div>
                             </div>
-
+                             <div class="form-group">
+                                <label class="col-sm-4 control-label">Post Dated</label>
+                                <div  class="col-sm-7">
+                                    <div class="input-group date">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        {!! Form::text('post_dated',null, ['class'=>'form-control','id'=>'_post_dated']) !!}
+                                    </div>
+                                </div>
+                            </div>
                             <div class="hr-line-dashed"></div> 
 
                             <div class="form-group">
@@ -82,6 +90,14 @@
                             </div>
 
                             <div class="form-group">
+                                <label class="col-sm-4 control-label">Status <span class="text-danger">*</span></label>
+                                <div class="col-sm-7">
+                                    {!! Form::select ('status',['Pending'=>'Pending','Complete'=>'Complete','Redep '=>'Redep','Pull Out'=>'Pull Out'], null,['placeholder' => 'Select Status...','class'=>'chosen-select required _status'])!!}
+    
+                                </div>
+                            </div>
+
+                            <div class="form-group">
 
                             
                                 <label class="col-sm-4 control-label">Collector <span class="text-danger">*</span></label>
@@ -102,10 +118,11 @@
                                 <div class="col-md-12 form-horizontal">
 
                                     <div class="ibox-tools pull-right">
-                                        
-                                        <button type="button" class="btn btn-danger btn-close" data-dismiss="modal" >Close</button>  
+                                    
+                                    {!! Form::submit('Save Changes', ['class' => 'btn btn-primary btn-save']) !!} 
+                                    <button type="button" class="btn btn-danger btn-close" data-dismiss="modal" >Close</button>  
 
-                                        {!! Form::submit('Save Changes', ['class' => 'btn btn-primary btn-save']) !!}  
+                                  
 
                                     </div>
 

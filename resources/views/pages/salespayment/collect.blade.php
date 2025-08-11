@@ -88,7 +88,7 @@
                                     <div  class="col-sm-3 ">
                                         <div class="input-group date">
                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                            {!! Form::text('so_date',$salesorder->so_date, ['class'=>'form-control','readonly'=>true,'id'=>'so_date']) !!}
+                                            {!! Form::text('so_date',$salesorder->so_date, ['class'=>'form-control so_date','readonly'=>true,'id'=>'so_date']) !!}
                                         </div>
                                     </div>
 
@@ -139,8 +139,10 @@
                                             <th>Id</th>
                                             <th>Date</th>
                                             <th>Transaction No.</th>
-                                            <th>Payemnt Mode</th>
-                                            <th>Amount Paid</th>
+                                            <th>Payment Mode</th>
+                                            <th>Post Dated</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
                                             <th>Collector</th>
                                             <th class="text-center">Action</th>
                                         </tr>
@@ -162,14 +164,14 @@
                                         <div class="form-group">
                                             <label class="col-md-6 control-label">Total Amount</label>
                                             <div class="col-md-6">
-                                                {!! Form::text('total_sales',$salespayments->sales_total, array('class' => 'form-control text-right total_sales','readonly' => 'true')) !!}
+                                                {!! Form::text('total_sales',number_format($salespayments->sales_total  ,2,".",""), array('class' => 'form-control text-right total_sales','readonly' => 'true')) !!}
                                             </div>
                                         </div>
 
                                         <div class="form-group">
                                             <label class="col-md-6 control-label">Total Paid</label>
                                             <div class="col-md-6">
-                                                {!! Form::text('total_paid',$total_paid->amount, array('placeholder' => '0.00','class' => 'form-control text-right total_paid', 'readonly' => 'true')) !!}
+                                                {!! Form::text('total_paid',number_format($total_paid->amount,2,".",""), array('placeholder' => '0.00','class' => 'form-control text-right total_paid', 'readonly' => 'true')) !!}
                                             </div>
 
                                         </div>
@@ -229,6 +231,20 @@
 
 <script type="text/javascript">
 
+
+
+
+
+
+        function confirmDelete(data,model) {   
+         $('#confirmDelete').modal({ backdrop: 'static', keyboard: false })
+            .on('click', '#delete-btn', function(){
+                $(this).attr("disabled","disabled");
+                document.location.href="/sales-payment/remove/"+data;
+            });
+        }
+
+
     $(document).ready(function(){
         var _status = $('.payment_status').val();
         var _SpID  = $('#salespayment_id').val();
@@ -242,14 +258,34 @@
             success:function(results){
 
                 for(var i=0;i<=results.length;i++) {
+                        var _stats = results[i].status;
+                        var _label ='';
 
-                    $('#dTable-terms-item-table tbody').append("<tr><td><input type='text' name='id[]' class='form-control input-sm text-center id' required=true size='4'  value="+ results[i].id +" readonly></td><td>"+ results[i].date_payment +"</td><td>"+ results[i].trasanction_no +"</td><td>"+ results[i].modes +"</td><td class='text-right'>"+ results[i].amount_collected +"</td><td>"+ results[i].collected_by +"</td><td style='text-align:center;'><a class='btn-primary btn btn-xs details' onclick='showdetails("+ results[i].id +"); return false;'><i class='fa fa-eye'></i></a>&nbsp;@IF($salespayments->payment_status == 'Existing Balance')<a class='btn-danger btn btn-xs' onclick='confirmDelete("+ results[i].id +"); return false;'><i class='fa fa-trash'></i></a>@ENDIF</td></tr>"); 
+                        if (_stats == 'Pending'){
+                            _label = "<label class='label label-primary'>";
+                        }
+                        if (_stats == 'Complete'){
+                            _label = "<label class='label label-success'>";
+                        }
+                        if (_stats == 'Redep'){
+                           _label = "<label class='label label-warning'>";
+                        }
+                        if (_stats == 'Pull Out'){
+                           _label = "<label class='label label-danger'>";
+                        }
+                             
+                                                
+                     $('#dTable-terms-item-table tbody').append("<tr><td><input type='text' name='id[]' class='form-control input-sm text-center id' required=true size='4'  value="+ results[i].id +" readonly></td><td>"+ results[i].date_payment +"</td><td>"+ results[i].transaction_no +"</td><td>"+ results[i].modes +"</td><td>"+ results[i].post_dated +"</td><td class='text-right'>"+ results[i].amount_collected.toFixed(2) +"</td><td>"+_label+"\
+                       "+ results[i].status +"</label></td><td>"+ results[i].collected_by +"</td>\
+                        <td style='text-align:center;'><a class='btn-primary btn btn-xs details' onclick='showdetails("+ results[i].id +"); return false;'><i class='fa fa-pencil'></i></a>&nbsp;\
+                        @IF($salespayments->payment_status == 'Existing Balance')<a class='btn-danger btn btn-xs' onclick='confirmDelete("+ results[i].id +"); return false;'><i class='fa fa-trash'></i></a>@ENDIF</td></tr>"); 
                 }
                     
             }
 
         })
     });
+
 
 
     $(document).ready(function(){
@@ -280,14 +316,17 @@
             id: _id, spID : _salespaymentID },  
             success:function(results){
 
-                $('#_date_payment').val( results.date_payment );
-                $('._payment_mode_id').val( results.modes );
-                $('._trasanction_no').val( results.trasanction_no );
+                $('#salespaymentterms_id').val( results.id );
+                $('#_date_payment').val( results.date_payment);
+                $('._payment_mode_id').val(results.mode_id).trigger("chosen:updated");
+                $('._trasanction_no').val( results.transaction_no );
+                $('._post_dated').val( results.post_dated ); 
                 $('._bank_name').val( results.bank_name );
                 $('._bank_account_no').val( results.bank_account_no );
                 $('._bank_account_name').val( results.bank_account_name );
                 $('._amount_collected').val( results.amount_collected );
-                $('._collected_by').val( results.collected_by );
+                $('._status').val( results.status).trigger("chosen:updated");
+                $('._collected_by').val(results.collector).trigger("chosen:updated");
                 $('.modal-title').text('Show Details');
                 $('#ShowPayemntModal').modal('show');
             }
@@ -295,10 +334,8 @@
     }
 
 
-    function confirmDelete(data,model) {   
-            var _id = data;
-            document.location.href="/sales-payment/remove/"+_id;
-    }
+
+
 
 </script>
 

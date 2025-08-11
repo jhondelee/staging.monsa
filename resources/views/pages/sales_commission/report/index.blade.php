@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle','Sales Payment')
+@section('pageTitle','Sales Commission Report')
 
 @section('content')
 
@@ -16,7 +16,7 @@
                             <a href="{{route('main')}}">Home</a>
                         </li>
                         <li class="active">
-                            <strong>Sales Report</strong>
+                            <strong>Sales Commision Report</strong>
                         </li>
                        
                     </ol>
@@ -33,11 +33,8 @@
                     <div class="col-lg-12">
                         <div class="ibox float-e-margins">
                             <div class="ibox-title">
-                                <h5>Sales Collection</h5>
+                                <h5>Sales Commissions</h5>
           
-                                <!--@if (!can('sales_payment.create'))
-                                  @endif  -->
-
                                 <div class="ibox-tools"> 
 
 
@@ -49,13 +46,9 @@
                             
                             <div class="form-group">  
                                 <div class="col-sm-8">
-                                    {!! Form::select ('select_report',[
-                                        'Customer Sales Report',
-                                        'Item Sales Report',
-                                        'Sales Payment Report',
-                                        'Customer Payment Report',
-                                        'Customer Balance Report'
-                                    ],null,['placeholder' => '--Select Report--','class'=>'chosen-select','id'=>'select_report'])!!}
+                                    {!! Form::select ('commssion_report',[
+                                        'Agent Commission Report'
+                                    ],null,['placeholder' => '--Select Commission Report--','class'=>'chosen-select','id'=>'commssion_report'])!!}
                                 </div>
                                 <div class="col-sm-3">
                                     <button type="button" class="btn btn-primary btn-generate" id="btn-generate">Generate</button>
@@ -83,9 +76,7 @@
                 </div>
 
             </div>
-@include('pages.salesreport.balance')
-@include('pages.salesreport.filter')
-@include('pages.salesreport.salesfilter')
+@include('pages.sales_commission.report.filter')
 @endsection
 
 
@@ -103,43 +94,22 @@
         $('#confirmDelete').modal({ backdrop: 'static', keyboard: false })
             .on('click', '#delete-btn', function(){
             $(this).attr("disabled","disabled");
-            document.location.href="/sales-payment/delete/"+data;
+            document.location.href="/commission-report/delete/"+data;
         });
     }
 
      
         $(document).on('click', '.btn-generate', function() {
 
-            var _report =  $('#select_report :selected').text();
+            var _report =  $('#commssion_report :selected').text();
 
-                if( _report  == 'Sales Payment Report' || _report == 'Customer Payment Report' ){
-                            
-                    $('.modal-title').text('Sales Payment Report Filter');
+                if( _report  == 'Agent Commission Report'){
+
+                    $('.modal-title').text('Sales Commission Filter');
                     $('#myModalReport').modal('show');
-
-                }
-                if( _report  == 'Customer Sales Report'){
-
-                    $('.modal-title').text('Sales Report Filter');
-                    $('#mySalesReport').modal('show');
-                    $('#items_generate').val('no');
                     
                 } 
                 
-                if( _report  == 'Item Sales Report') {
-
-                    $('.modal-title').text('Sales Report Filter');
-                    $('#mySalesReport').modal('show');
-                    $('#items_generate').val('items');
-                }
-
-                if( _report  == 'Customer Balance Report') {
-
-                    $('.modal-title').text('Customer Filter');
-                    $('#myBalanceReport').modal('show');
-
-                }
-
         });
 
     

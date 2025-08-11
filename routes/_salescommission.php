@@ -58,7 +58,9 @@ Route::group(['prefix' => 'agent-commission'], function() {
 
     Route::get('delete/{id}', 'AgentCommissionController@destroy')->name("commission.delete");    
 
-    Route::get('print/{id}', 'AgentCommissionController@printSO')->name("commission.print"); 
+    Route::get('post/{id}', 'AgentCommissionController@post')->name("commission.post");
+
+    Route::get('print/{id}', 'AgentCommissionController@print')->name("commission.print");  
 
     Route::post('generate', 'AgentCommissionController@getsalesCom')->name("commission.generate"); 
 
@@ -88,3 +90,13 @@ Route::group(['prefix' => 'agent-team'], function() {
 });
 
 
+// Commission Report
+Route::group(['prefix' => 'commission-report'], function() {  
+
+    Route::get('/', 'CommissionReportController@index')->name("commission_report.index");
+    
+    Route::post('print', 'CommissionReportController@print_commission')->name("commission_report.print");
+
+    Route::get('commission/{start}/{end}/{id}', 'CommissionReportController@generate_commission')->name("commission_report.generate_commission");    
+
+});
