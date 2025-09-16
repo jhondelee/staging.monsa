@@ -66,8 +66,6 @@ class Factory implements SetInterface
         return collect($results);
     } 
 
-
-
     public function addInventoryItem(){
           $results = DB::SELECT ( '
                    SELECT i.id, 
@@ -76,6 +74,20 @@ class Factory implements SetInterface
                     LEFT JOIN unit_of_measure u
                     ON i.unit_id = u.id
                     WHERE  i.deleted_at is NULL AND i.activated=1;');
+          return collect($results);
+    }
+
+    public function addConsumableItem(){
+          $results = DB::SELECT ( '
+                   SELECT i.id,
+                    concat(e.description) as item_name 
+                    FROM inventory i
+                    inner join items e
+                    ON e.id = i.item_id AND i.consumable = 0
+                    LEFT JOIN unit_of_measure u
+                    ON e.unit_id = u.id
+                    WHERE  e.deleted_at is NULL AND e.activated=1
+                    ORDER BY e.name;');
           return collect($results);
     }
 
@@ -111,7 +123,8 @@ class Factory implements SetInterface
                            u.code AS units,
                            e.onhand_quantity,
                            e.unit_quantity,
-                           e.received_date
+                           e.received_date,
+                           e.consumable
                     FROM  inventory e
                     INNER JOIN items i
                     ON e.item_id = i.id
@@ -279,4 +292,22 @@ class Factory implements SetInterface
 
         return collect($results);
     } 
+
+    public function ifItemExist($itemID,$loc)
+    {
+        $results = DB::select(
+            "SELECT * FROM inventory WHERE consumable = 1 AND item_id = ? AND location = ? ",[$itemID,$loc]
+        );
+
+         return collect($results);
+    }
+
+       public function deducInventory($itemID,$loc)
+    {
+        $results = DB::select(
+            "SELECT * FROM inventory WHERE consumable = 0 AND item_id = ? AND location = ? ",[$itemID,$loc]
+        );
+
+        return collect($results);
+    }
 }
